@@ -50,6 +50,8 @@ public:
 	afx_msg void OnButtonMode1();
 	afx_msg void OnButtonMode2();
 	afx_msg void OnButtonMode3();
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 };
 
 #ifndef _DEBUG  // debug version in GraphicsView.cpp

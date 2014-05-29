@@ -11,6 +11,7 @@ class Figure : public CWnd
 		virtual ~Figure();
 		virtual void Draw(CDC* pDC){};
 		virtual bool IsClicked(int x, int y) {return false;};
+		virtual void Drag(int x, int y){};
 
 	protected:
 		DECLARE_MESSAGE_MAP()

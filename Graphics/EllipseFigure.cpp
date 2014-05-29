@@ -1,17 +1,25 @@
 // EllipseFigure.cpp : implementation file
 
 #include "stdafx.h"
+#include <math.h>
 #include "Graphics.h"
 #include "EllipseFigure.h"
 
 // EllipseFigure
 IMPLEMENT_DYNAMIC(EllipseFigure, CWnd)
 
-EllipseFigure::EllipseFigure(int x, int y, int r)
+EllipseFigure::EllipseFigure(int cx, int cy, int x, int y)
 {
-	this->SetX(x);
-	this->SetY(y);
-	this->SetRadius(r);
+	this->SetX(cx);
+	this->SetY(cy);
+	this->SetRadius(x, y);
+}
+
+EllipseFigure::EllipseFigure(int cx, int cy, int r)
+{
+	this->SetX(cx);
+	this->SetY(cy);
+	this->radius = r;
 }
 
 EllipseFigure::~EllipseFigure()
@@ -20,14 +28,17 @@ EllipseFigure::~EllipseFigure()
 
 void EllipseFigure::Draw(CDC* pDC)
 {
-	pDC->Ellipse(this->centerX - this->radius, this->centerY - this->radius * 2,
-		this->centerX + this->radius, this->centerY + this->radius * 2);
+	pDC->Ellipse(this->centerX - this->radius * 2, this->centerY - this->radius,
+		this->centerX + this->radius * 2, this->centerY + this->radius);
 }
 
 bool EllipseFigure::IsClicked(int x, int y)
 {
-	if(y - this->radius*2 <= this->centerY || y + this->radius*2 == this->centerY
-		|| x - this->radius == this->centerX || x + this->radius == this->centerX)
+	float rX = pow((float)x - this->centerX, 2);
+	float rY = pow((float)y - this->centerY, 2);
+	int radius = sqrt((rX + 4 * rY) / 4);
+
+	if(abs(radius - this->radius) <= 3)
 	{
 		return true;
 	}
@@ -45,6 +56,12 @@ void EllipseFigure::Serialize(CArchive& ar)
 	}
 }
 
+void EllipseFigure::Drag(int x, int y)
+{
+	this->centerX = x;
+	this->centerY = y;
+}
+
 void EllipseFigure::SetX(int x)
 {
 	this->centerX = x;
@@ -55,9 +72,11 @@ void EllipseFigure::SetY(int y)
 	this->centerY = y;
 }
 
-void EllipseFigure::SetRadius(int x)
+void EllipseFigure::SetRadius(int x, int y)
 {
-	this->radius = this->centerX - x;
+	float rX = pow((float)x - this->centerX, 2);
+	float rY = pow((float)y - this->centerY, 2);
+	this->radius = sqrt((rX + 4 * rY) / 4);
 }
 
 int EllipseFigure::GetX()

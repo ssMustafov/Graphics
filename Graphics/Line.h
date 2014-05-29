@@ -15,6 +15,7 @@ class Line : public CWnd, public Figure
 		void Draw(CDC* pDC);
 		bool IsClicked(int x, int y);
 		void Serialize(CArchive& ar);
+		void Drag(int x, int y);
 		void SetX(int x);
 		void SetY(int y);
 		void SetLength(int x);

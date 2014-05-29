@@ -51,6 +51,12 @@ void Line::Serialize(CArchive& ar)
 	}
 }
 
+void Line::Drag(int x, int y)
+{
+	this->x = x;
+	this->y = y;
+}
+
 void Line::SetX(int x)
 {
 	this->x = x;

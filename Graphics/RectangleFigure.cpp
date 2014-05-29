@@ -66,6 +66,13 @@ void RectangleFigure::Serialize(CArchive& ar)
 	}
 }
 
+void RectangleFigure::Drag(int x, int y)
+{
+	this->topLeftX = x;
+	this->topLeftY = y;
+	//TODO:fix
+}
+
 void RectangleFigure::SetTopLeftX(int x)
 {
 	this->topLeftX = x;

@@ -14,6 +14,7 @@ class RectangleFigure : public CWnd, public Figure
 		void Draw(CDC* pDC);
 		bool IsClicked(int x, int y);
 		void Serialize(CArchive& ar);
+		void Drag(int x, int y);
 		void SetTopLeftX(int x);
 		void SetTopLeftY(int y);
 		void SetDownRightX(int x);

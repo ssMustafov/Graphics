@@ -38,6 +38,8 @@ BEGIN_MESSAGE_MAP(CGraphicsView, CView)
 	ON_COMMAND(ID_BUTTON_MODE_1, &CGraphicsView::OnButtonMode1)
 	ON_COMMAND(ID_BUTTON_MODE_2, &CGraphicsView::OnButtonMode2)
 	ON_COMMAND(ID_BUTTON_MODE_3, &CGraphicsView::OnButtonMode3)
+	ON_WM_LBUTTONDOWN()
+	ON_WM_MOUSEMOVE()
 END_MESSAGE_MAP()
 
 // CGraphicsView construction/destruction
@@ -146,6 +148,14 @@ void CGraphicsView::OnLButtonUp(UINT nFlags, CPoint point)
 	ASSERT_VALID(pDoc);
 	if (!pDoc) return;
 	
+	if(pDoc->mouseMove && pDoc->movingObject >= 0)
+	{
+		pDoc->figures[pDoc->movingObject]->Drag(point.x, point.y);
+		pDoc->mouseMove = false;
+		pDoc->movingObject = -1;
+		return;
+	}
+
 	if(nFlags == 0x0008)
 	{
 		// if Ctrl is holding down delete object
@@ -172,7 +182,7 @@ void CGraphicsView::OnLButtonUp(UINT nFlags, CPoint point)
 			else if(pDoc->mode == 1)
 			{
 				// Ellipse
-				pDoc->figures.push_back(new EllipseFigure(pDoc->x, pDoc->y, point.x));
+				pDoc->figures.push_back(new EllipseFigure(pDoc->x, pDoc->y, point.x, point.y));
 			}
 			else if(pDoc->mode == 2)
 			{
@@ -263,4 +273,44 @@ void CGraphicsView::OnButtonMode3()
 
 	pDoc->mode = 3;
 	Invalidate();
+}
+
+
+void CGraphicsView::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// Get the current document
+	CGraphicsDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc) return;
+
+	if(!pDoc->mouseMove && pDoc->movingObject == -1)
+	{
+		for(int i=0; i<pDoc->numberOfObjects; i++)
+		{
+			if(pDoc->figures[i]->IsClicked(point.x, point.y))
+			{
+				pDoc->movingObject = i;
+				break;
+			}
+		}
+	}
+
+	CView::OnLButtonDown(nFlags, point);
+}
+
+void CGraphicsView::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// Get the current document
+	CGraphicsDoc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc);
+	if (!pDoc) return;
+
+	if(pDoc->movingObject >= 0)
+	{
+		pDoc->figures[pDoc->movingObject]->Drag(point.x, point.y);
+		pDoc->mouseMove = true;
+		Invalidate();
+	}
+
+	CView::OnMouseMove(nFlags, point);
 }

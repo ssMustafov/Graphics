@@ -15,8 +15,9 @@ protected: // create from serialization only
 
 // Attributes
 public:
-	int numberOfObjects, numberOfClicks, mode, x, y;
+	int numberOfObjects, numberOfClicks, mode, x, y, movingObject;
 	std::vector<Figure*> figures;
+	bool mouseMove;
 
 // Operations
 public:

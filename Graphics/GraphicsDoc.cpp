@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+#include <vector>
 // SHARED_HANDLERS can be defined in an ATL project implementing preview, thumbnail
 // and search filter handlers and allows sharing of document code with that project.
 #ifndef SHARED_HANDLERS
@@ -39,6 +40,11 @@ CGraphicsDoc::CGraphicsDoc()
 
 CGraphicsDoc::~CGraphicsDoc()
 {
+	for(std::vector<Figure*>::const_iterator it = figures.begin(); it != figures.end(); it++)
+	{
+		delete *it;
+	} 
+	figures.clear();
 }
 
 BOOL CGraphicsDoc::OnNewDocument()
@@ -50,6 +56,8 @@ BOOL CGraphicsDoc::OnNewDocument()
 	numberOfClicks = 0;
 	numberOfObjects = 0;
 	mode = 0;
+	movingObject = -1;
+	mouseMove = false;
 
 	// Allocate memory for 50 elements in the vector
 	figures.reserve(50);
@@ -98,7 +106,7 @@ void CGraphicsDoc::Serialize(CArchive& ar)
 			else if(line[0] == '1')
 			{
 				sscanf(ascii, "%d %d %d %d", &m, &x, &y, &radius);
-				figures.push_back(new EllipseFigure(x, y, radius+x));
+				figures.push_back(new EllipseFigure(x, y, radius));
 				numberOfObjects++;
 			}
 			else if(line[0] == '2')
